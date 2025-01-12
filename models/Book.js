@@ -8,6 +8,5 @@ const BookSchema = new mongoose.Schema({
   publicationYear: { type: Number, required: true }
 });
 
-
 module.exports = mongoose.model('Book', BookSchema);
 

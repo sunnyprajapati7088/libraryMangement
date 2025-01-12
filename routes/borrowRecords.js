@@ -19,9 +19,9 @@ router.get('/',authRole('admin'), async (req, res) => {
 });
 
 router.get('/user',authRole('user'), async (req, res) => {
-  console.log("kjkjkj")
+  
   try {
-    const borrowRecords = await BorrowRecord.findOne({})
+    const borrowRecords = await BorrowRecord.findOne({user:req.user.user.user_id  })
       .populate('user', 'name email')
       .populate('book', 'title');
     res.json(borrowRecords);

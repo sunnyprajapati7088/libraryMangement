@@ -1,9 +1,8 @@
 const express = require('express');
 const Author = require('../models/Author');
-const { authRole } = require('../middlewere/auth');
+const { authRole, authenticateToken } = require('../middlewere/auth');
 
 const router = express.Router();
-
 // GET /authors: List all authors with the books they have written
 router.get('/', async (req, res) => {
   try {
@@ -16,14 +15,14 @@ router.get('/', async (req, res) => {
 
 
 // POST /authors: Add a new author
-router.post('/',authRole('admin'), async (req, res) => {
+router.post("/", authenticateToken,authRole("admin"), async (req, res) => {
   try {
     const { name, dateOfBirth, nationality } = req.body;
     const author = new Author({ name, dateOfBirth, nationality });
     await author.save();
     res.status(201).json(author);
   } catch (error) {
-    res.status(400).json({ message: 'Error creating author', error });
+    res.status(400).json({ message: "Error creating author", error });
   }
 });
 

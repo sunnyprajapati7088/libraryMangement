@@ -5,7 +5,8 @@ const BorrowRecord = require('../models/BorrowRecord');
 const jwt=require('jsonwebtoken')
 const bcrypt=require('bcrypt')
 const router = express.Router();
-const dotenv=require('dotenv')
+const dotenv=require('dotenv');
+const { authRole } = require('../middlewere/auth');
 dotenv.config()
 
 // GET /users: List all users and their borrowed books
@@ -36,7 +37,7 @@ router.post('/', async (req, res) => {
 
 
 // PUT /users/:id/borrow: Borrow a book
-router.put('/:id/borrow', async (req, res) => {
+router.put('/:id/borrow', authRole("admin","user"),async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     const book = await Book.findById(req.body.bookId);
@@ -62,7 +63,7 @@ router.put('/:id/borrow', async (req, res) => {
 });
 
 // PUT /users/:id/return: Return a borrowed book
-router.put('/:id/return', async (req, res) => {
+router.put('/:id/return', authRole("admin","user"),async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     const book = await Book.findById(req.body.bookId);
