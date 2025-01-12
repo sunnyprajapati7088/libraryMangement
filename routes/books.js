@@ -1,6 +1,7 @@
 const express = require('express');
 const Book = require('../models/Book');
 const Author = require('../models/Author');
+const { authRole } = require('../middlewere/auth');
 
 const router = express.Router();
 
@@ -15,15 +16,12 @@ router.get('/', async (req, res) => {
 });
 
 // POST /books: Add a new book with its authors
-router.post('/', async (req, res) => {
+router.post('/',authRole('admin'), async (req, res) => {
   console.log(req.body)
   try {
     const { title, price, authors, genres, publicationYear } = req.body;
-    const book = new Book({ title, price, genres, publicationYear });
-
- 
+    const book = new Book({ title, price, genres, publicationYear }); 
       const author = await Author.findById(authors);
-     
       if (author) {
         book.authors.push(author._id);
         author.books.push(book._id);

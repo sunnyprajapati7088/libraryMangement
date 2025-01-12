@@ -2,10 +2,14 @@ const express = require('express');
 const User = require('../models/User');
 const Book = require('../models/Book');
 const BorrowRecord = require('../models/BorrowRecord');
-
+const jwt=require('jsonwebtoken')
+const bcrypt=require('bcrypt')
 const router = express.Router();
+const dotenv=require('dotenv')
+dotenv.config()
 
 // GET /users: List all users and their borrowed books
+let sessions = new Set();
 router.get('/', async (req, res) => {
   try {
     const users = await User.find().populate('borrowedBooks', 'title');
@@ -16,16 +20,20 @@ router.get('/', async (req, res) => {
 });
 
 // POST /users: Add a new user
-router.post('/', async (req, res) => {
+router.post('/', async (req, res) => {  
+  
   try {
-    const { name, email } = req.body;
-    const user = new User({ name, email });
+    const { name, email,password,role } = req.body;
+    const hashPassword= await bcrypt.hash(password,await bcrypt.genSalt());
+    console.log(hashPassword)
+    const user = new User({ name, email,password:hashPassword,role });
     await user.save();
     res.status(201).json(user);
   } catch (error) {
     res.status(400).json({ message: 'Error creating user', error });
   }
 });
+
 
 // PUT /users/:id/borrow: Borrow a book
 router.put('/:id/borrow', async (req, res) => {

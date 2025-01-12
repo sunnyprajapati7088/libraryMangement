@@ -1,24 +1,26 @@
 const express = require('express');
+const dotenv=require('dotenv')
+const app = express();
+dotenv.config()
 const mongoose = require('mongoose');
 const bookRoutes = require('./routes/books');
 const authorRoutes = require('./routes/authors');
 const userRoutes = require('./routes/users');
 const borrowRecordRoutes = require('./routes/borrowRecords');
+const { authenticateToken } = require('./middlewere/auth');
 
-const app = express();
+
 
 // Middleware
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose
-  .connect(
-    "mongodb+srv://krishiconnect:1234567890@cluster0.sce5c.mongodb.net/Explorin?retryWrites=true&w=majority"
-  )
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Could not connect to MongoDB", err));
+mongoose.connect("mongodb+srv://kishan95570:kishan@cluster0.xvgle.mongodb.net/")
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('Could not connect to MongoDB', err));
 
 // Routes
+app.use(authenticateToken)
 app.use('/books', bookRoutes);
 app.use('/authors', authorRoutes);
 app.use('/users', userRoutes);
